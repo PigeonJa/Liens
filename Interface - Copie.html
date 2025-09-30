@@ -1,0 +1,740 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Interface</title>
+<link rel="icon" type="image/svg" href="house-user-solid.svg">
+<!--<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet" />-->
+<link href="font-awesome-master\css\all.min.css" type="text/css" rel="stylesheet" />
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap');
+  * {
+    box-sizing: border-box;
+  }
+  body {
+    margin: 0; padding: 0;
+    height: 100vh;
+    background: #0a122a; /* bleu très foncé presque noir */
+    font-family: 'Montserrat', sans-serif;
+    overflow: hidden;
+    color: white;
+  }
+  /* Conteneur central */
+  #container {
+    position: relative;
+    width: 100vw;
+    height: 100vh;
+    overflow: visible;
+  }
+
+  /* Cercle central */
+  #center-circle {
+    position: absolute;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    width: 180px;
+    height: 180px;
+    border-radius: 50%;
+    background: #222e50;
+    box-shadow: 0 0 15px #0ff;
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    user-select: none;
+    transition: background 0.3s ease;
+    z-index: 10;
+  }
+  #center-circle:hover {
+    background: #0ff;
+    color: #000;
+  }
+  #center-circle i {
+    font-size: 3.5rem;
+    margin-bottom: 10px;
+  }
+  #center-circle span {
+    font-weight: 700;
+    font-size: 1.4rem;
+  }
+
+  /* Cercle orbitant autour */
+  #orbit {
+    position: absolute;
+    width: 450px;
+    height: 450px;
+    top: 50%; left: 50%;
+    margin-left: -225px; /* moitié width */
+    margin-top: -225px;  /* moitié height */
+    animation: spin 40s linear infinite;
+  }
+
+  /* Chaque cercle catégorie */
+  .orbit-circle {
+    position: absolute;
+    width: 110px;
+    height: 110px;
+    border-radius: 50%;
+    background: #1c2541;
+    box-shadow: 0 0 10px #0ff;
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    user-select: none;
+    transition: background 0.3s ease;
+  }
+  .orbit-circle:hover {
+    background: #0ff;
+    color: #000;
+  }
+  .orbit-circle i {
+    font-size: 2.2rem;
+    pointer-events: none;
+    user-select: none;
+    /* for keeping icon upright */
+    transform-style: preserve-3d;
+  }
+  .orbit-circle span {
+    font-weight: 600;
+    font-size: small;
+    margin-top: 6px;
+    pointer-events: none;
+    user-select: none;
+    white-space: nowrap;
+  }
+  .color-code {
+    font-size: 0.85rem;
+    margin-top: 2px;
+    font-weight: 500;
+    font-family: monospace;
+    user-select: none;
+  }
+
+  /* Positionnement autour du cercle */
+  /* 9 cercles positionnés sur un cercle autour du centre */
+  /* distance 225 px du centre environ */
+  /* On ajuste plus large pour éloigner plus */
+  .orbit-circle:nth-child(1) { /* Informatique */
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%) rotate(0deg) translate(230px) rotate(0deg);
+    background: #007ACC ; /*3498db*/
+  }
+  .orbit-circle:nth-child(2) { /* Réseaux Sociaux */
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%) rotate(40deg) translate(230px) rotate(-40deg);
+    background: #1abc9c;
+  }
+  .orbit-circle:nth-child(3) { /* Achats */
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%) rotate(80deg) translate(230px) rotate(-80deg);
+    background: #e67e22;
+  }
+  .orbit-circle:nth-child(4) { /* Jeux */
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%) rotate(120deg) translate(230px) rotate(-120deg);
+    background: #9b59b6;
+  }
+  .orbit-circle:nth-child(5) { /* Loisirs */
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%) rotate(160deg) translate(230px) rotate(-160deg);
+    background: #e74c3c;
+  }
+  .orbit-circle:nth-child(6) { /* Films */
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%) rotate(200deg) translate(230px) rotate(-200deg);
+    background: #34495e;
+  }
+  .orbit-circle:nth-child(7) { /* Musiques */
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%) rotate(240deg) translate(230px) rotate(-240deg);
+    background: #f1c40f;
+    /*color: #222;*/
+  }
+  .orbit-circle:nth-child(8) { /* Scolaire */
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%) rotate(280deg) translate(230px) rotate(-280deg);
+    background: #2ecc71;
+  }
+  .orbit-circle:nth-child(9) { /* Livre */
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%) rotate(320deg) translate(230px) rotate(-320deg);
+    background: #95a5a6;
+    /*color: #222;*/
+  }
+  .orbit-circle:nth-child(10) { /* Objet */
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%) rotate(320deg) translate(230px) rotate(-320deg);
+    background: #95a5a6;
+    /*color: #222;*/  
+  }
+
+  /* Animation de rotation du cercle d’orbite */
+  @keyframes spin {
+    0% {transform: rotate(0deg);}
+    100% {transform: rotate(360deg);}
+  }
+
+  /* Fenêtres modales */
+  .modal {
+    position: fixed;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    width: 75vw;
+    max-width: 1100px;
+    max-height: 75vh;
+    background: rgba(0,0,0,0.85);
+    border-radius: 12px;
+    box-shadow: 0 0 30px #0ff;
+    padding: 20px 25px;
+    overflow-y: auto;
+    color: white;
+    font-size: 0.85rem;
+    display: none;
+    z-index: 999;
+  }
+  .modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 2px solid #0ff;
+    margin-bottom: 12px;
+    padding-bottom: 5px;
+  }
+  .modal-header h2 {
+    margin: 0;
+    font-weight: 700;
+    font-size: 1.5rem;
+  }
+  .close-btn {
+    cursor: pointer;
+    font-size: 1.6rem;
+    color: #0ff;
+    background: transparent;
+    border: none;
+    padding: 5px 10px;
+    transition: color 0.3s ease;
+  }
+  .close-btn:hover {
+    color: #fff;
+  }
+  /* Sous-catégories */
+  .subcategory {
+    margin-bottom: 18px;
+  }
+  .subcategory h3 {
+    font-weight: 700;
+    margin-bottom: 6px;
+    font-size: 1.2rem;
+    border-left: 5px solid #0ff;
+    padding-left: 8px;
+  }
+  .links-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+  .links-list a {
+    background: #0ff1;
+    color: #000;
+    padding: 5px 12px;
+    border-radius: 6px;
+    font-weight: 600;
+    text-decoration: none;
+    font-size: 0.85rem;
+    flex-shrink: 0;
+    white-space: nowrap;
+    transition: background-color 0.25s ease;
+  }
+  .links-list a:hover {
+    background: #0ff9;
+    color: #000;
+  }
+
+  /* Fond des modals selon catégorie (clair, semi-transparent) */
+  .modal.informatique { background: rgba(52, 152, 219, 0.9); color: #111; }
+  .modal.reseaux { background: rgba(26, 188, 156, 0.9); color: #111; }
+  .modal.achats { background: rgba(230, 126, 34, 0.9); color: #111; }
+  .modal.jeux { background: rgba(155, 89, 182, 0.9); color: #111; }
+  .modal.loisirs { background: rgba(231, 76, 60, 0.9); color: #111; }
+  .modal.films { background: rgba(52, 73, 94, 0.9); color: #111; }/**/
+  .modal.musiques { background: rgba(241, 196, 15, 0.9); color: #111; }
+  .modal.scolaire { background: rgba(46, 204, 113, 0.9); color: #111; }
+  .modal.outils { background: rgba(149, 165, 166, 0.9); color: #111; }
+  .modal.livres { background: rgba(149, 165, 166, 0.9); color: #111; } /**/
+/* color: #eee; */
+
+  /* Scrollbar modale (style WebKit) */
+  .modal::-webkit-scrollbar {
+    width: 8px;
+  }
+  .modal::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  .modal::-webkit-scrollbar-thumb {
+    background: #0ff;
+    border-radius: 10px;
+  }
+  /* Scrollbar Firefox */
+  .modal {
+    scrollbar-width: thin;
+    scrollbar-color: #0ff transparent;
+  }
+
+
+
+
+
+  /* Barre latérale droite */
+#sidebar {
+  position: fixed;
+  top: 50%;
+  right: 0;
+  transform: translateY(-50%);
+  width: 60px;
+  background: rgba(20, 20, 20, 0.9);
+  border-left: 2px solid #444;
+  border-radius: 8px 0 0 8px;
+  padding: 10px 5px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  transition: width 0.3s ease;
+  z-index: 999;
+}
+#sidebar.expanded {
+  width: 180px;
+}
+#toggleSidebar {
+  background: none;
+  border: none;
+  color: white;
+  font-size: 1.2rem;
+  cursor: pointer;
+  margin-bottom: 10px;
+  transition: transform 0.3s ease;
+}
+#sidebar.expanded #toggleSidebar i {
+  transform: rotate(180deg);
+}
+.sidebar-links {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 17px;
+}
+.sidebar-links a {
+  color: white;
+  font-size: 1.5rem;
+  text-decoration: none;
+  transition: color 0.2s ease, transform 0.2s ease;
+}
+.sidebar-links a:hover {
+  color: #1abc9c;
+  transform: scale(1.2);
+}
+#sidebar.expanded .sidebar-links a::after {
+  content: attr(title);
+  display: inline-block;
+  color: white;
+  font-size: 0.8rem;
+  margin-left: 8px;
+  white-space: nowrap;
+  vertical-align: middle;
+}
+
+
+
+/* Gère l'effet de survol uniquement sur le fond du cercle */
+.orbit-circle,
+#center-circle {
+  /*position: relative;*/
+  transition: transform 0.3s ease;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  transform-origin: center center;
+}
+
+/* Survol : grossit le fond du cercle uniquement */
+.orbit-circle::before,
+#center-circle::before {
+  content: "";
+  position: absolute;
+  border-radius: 50%;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: inherit;
+  z-index: 0;
+  transition: transform 0.3s ease;
+}
+
+/* Survol = grossissement du cercle sans grossir le contenu */
+.orbit-circle:hover::before,
+#center-circle:hover::before {
+  transform: scale(1.2);
+  box-shadow: 0 0 15px rgba(255, 255, 255, 0.4);
+}
+
+/* S'assure que le contenu reste au-dessus */
+.orbit-circle > *,
+#center-circle > * {
+  /*position: relative;*/
+  z-index: 1;
+}
+
+
+
+
+/*******
+
+
+
+
+*/
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+@keyframes counter-spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(-360deg); }
+}
+
+/* Conteneur qui tourne (fait orbiter les cercles) */
+#orbit {
+  animation: spin 30s linear infinite;
+  transform-origin: center center;
+}
+
+/* Compense la rotation pour garder le contenu droit */
+.orbit-circle .content {
+  animation: counter-spin 30s linear infinite;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+</style>
+</head>
+
+
+
+
+<body>
+<div id="sidebar">
+  <button id="toggleSidebar"><i class="fas fa-chevron-left"></i></button>
+  <div class="sidebar-links"><!-- 13 liens au maximum-->
+    <a href="https://epita.it/" target="_blank" title="Epita.it"><i class="fa-solid fa-school"></i></a>
+  </div>
+</div>
+
+
+
+
+<div id="container">
+
+  <!-- Cercle central -->
+  <div id="center-circle" data-category="outils">
+    <i class="fas fa-tools"></i>
+    <span>Outils</span>
+    <!--<div class="color-code" style="color:#95a5a6;">#95a5a6</div>-->
+  </div>
+
+  <!-- Cercle orbitant -->
+  <div id="orbit">
+    <div class="orbit-circle" data-category="informatique"><div class="content">
+      <i class="fas fa-laptop-code"></i>
+      <span>Informatique</span>
+      <div class="color-code" style="color:#3498db;"></div>
+    </div></div>
+    <div class="orbit-circle" data-category="reseaux"><div class="content">
+      <i class="fa-solid fa-hashtag"></i>
+      <span>Réseaux Sociaux</span>
+      <div class="color-code" style="color:#1abc9c;"></div>
+    </div></div>
+    <div class="orbit-circle" data-category="achats"><div class="content">
+      <i class="fas fa-shopping-cart"></i>
+      <span>Achats</span>
+      <div class="color-code" style="color:#e67e22;"></div>
+    </div></div>
+    <div class="orbit-circle" data-category="jeux"><div class="content">
+      <i class="fas fa-gamepad"></i>
+      <span>Jeux</span>
+      <div class="color-code" style="color:#9b59b6;"></div>
+    </div></div>
+    <div class="orbit-circle" data-category="loisirs"><div class="content">
+      <i class="fas fa-guitar"></i>
+      <span>Loisirs</span>
+      <div class="color-code" style="color:#e74c3c;"></div>
+    </div></div>
+    <div class="orbit-circle" data-category="films"><div class="content">
+      <i class="fas fa-film"></i>
+      <span>Films</span>
+      <div class="color-code" style="color:#34495e;"></div>
+    </div></div>
+    <div class="orbit-circle" data-category="musiques"><div class="content"><!-- style="color:#222;"-->
+      <i class="fas fa-music"></i>
+      <span>Musique</span>
+      <div class="color-code" style="color:#f1c40f;"></div>
+    </div></div>
+    <!----->
+    <div class="orbit-circle" data-category="scolaire"><div class="content">
+      <i class="fas fa-school"></i>
+      <span>Scolaire</span>
+      <div class="color-code" style="color:#2ecc71;"></div>
+    </div></div>
+    <!---->
+    <div class="orbit-circle" data-category="livres" ><div class="content"><!--style="color:#222;"" -->
+      <i class="fas fa-book"></i>
+      <span>Livres</span>
+      <div class="color-code" style="color:#95a5a6;"></div>
+    </div></div>
+  </div>
+</div>
+
+<!-- Fenêtres modales -->
+<div class="modal informatique" id="modal-informatique" aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="modal-informatique-title">
+  <div class="modal-header">
+    <h2 id="modal-informatique-title"><i class="fas fa-laptop-code"></i> Informatique</h2>
+    <button class="close-btn" aria-label="Fermer la fenêtre">&times;</button>
+  </div>
+  <!-- Sous-catégories Informatique -->
+  <div class="subcategory">
+    <h3>Python, HTML, Css, JS, C++, C Sharp, Autres, Cours, réseaux, programmation</h3>
+    <div class="links-list">
+    </div>
+  </div>
+</div>
+
+
+<!--                           //////// Réseaux Sociaux \\\\\\\\\\-->
+<div class="modal reseaux" id="modal-reseaux" aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="modal-reseaux-title">
+  <div class="modal-header">
+    <h2 id="modal-reseaux-title" style="color:white!important"><i class="fa-solid fa-hashtag"></i> Réseaux Sociaux</h2>
+    <button class="close-btn" aria-label="Fermer la fenêtre">&times;</button>
+  </div>
+  <!-- Sous-catégories Réseaux Sociaux -->
+  <div class="subcategory">
+    <h3>Liste des réseaux sociaux</h3>
+    <div class="links-list">
+      <a href="https://fr.linkedin.com/" target="_blank" rel="noopener noreferrer">Linkedin</a>
+    </div>
+  </div>
+</div>
+
+
+<!-- Scolaire - Scolaire - Scolaire - Scolaire - Scolaire - Scolaire - Scolaire - Scolaire - Scolaire - Scolaire - Scolaire - Scolaire - Scolaire - Scolaire - Scolaire - Scolaire - Scolaire - Scolaire - Scolaire - Scolaire - -->
+<div class="modal scolaire" id="modal-scolaire" aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="modal-scolaire-title">
+  <div class="modal-header">
+    <h2 id="modal-scolaire-title"><i class="fas fa-school"></i> Scolaire</h2>
+    <button class="close-btn" aria-label="Fermer la fenêtre">&times;</button>
+  </div>
+  <!-- Sous-catégories Réseaux Sociaux -->
+<div class="subcategory">
+    <h3>EPITA</h3>
+    <div class="links-list">
+      <a href="https://www.epita.fr/" target="_blank" rel="noopener noreferrer">EPITA</a>
+    </div>
+</div>
+  <div class="subcategory">
+    <h3>Lycée</h3>
+    <div class="links-list">
+      <a href="https://martiniere-duchere.ent.auvergnerhonealpes.fr/" target="_blank" rel="noopener noreferrer">ENT La Martinière Duchère</a>
+    </div>
+</div>
+</div>
+
+
+
+
+<!-- Jeux - Jeux - Jeux - Jeux - Jeux - Jeux - Jeux - Jeux - Jeux - Jeux - Jeux - Jeux - Jeux - Jeux - Jeux - Jeux - Jeux - Jeux - Jeux - Jeux - Jeux - Jeux - Jeux - Jeux - Jeux - Jeux - Jeux - -->
+<div class="modal jeux" id="modal-jeux" aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="modal-jeux-title">
+  <div class="modal-header">
+    <h2 id="modal-jeux-title"><i class="fas fa-gamepad"></i> Jeux</h2>
+    <button class="close-btn" aria-label="Fermer la fenêtre">&times;</button>
+  </div>
+  <!-- Sous-catégories Jeux -->
+  <div class="subcategory">
+    <h3>Crazygames</h3>
+    <div class="links-list">
+    </div>
+</div>
+</div><!--Fin Jeux-->
+
+
+<!-- Films & Séries - Films & Séries - Films & Séries - Films & Séries - Films & Séries - Films & Séries - Films & Séries - Films & Séries - Films & Séries - Films & Séries - Films & Séries - Films & Séries - -->
+<div class="modal films" id="modal-films" aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="modal-films-title">
+  <div class="modal-header">
+    <h2 id="modal-films-title"><i class="fas fa-film"></i> Films & Séries</h2>
+    <button class="close-btn" aria-label="Fermer la fenêtre">&times;</button>
+  </div>
+  <!-- Sous-catégories Films -->
+  <div class="subcategory">
+    <h3>Sites de Streaming</h3>
+    <div class="links-list">
+      <a href="https://flemmix.mov/" target="_blank" rel="noopener noreferrer">Flemmix / Wiflix</a>
+    </div>
+</div>
+</div><!--Fin Films-->
+
+
+
+<!-- Livres - Livres - Livres - Livres - Livres - Livres - Livres - Livres - Livres - Livres - Livres - Livres - Livres - Livres - Livres - Livres - Livres - Livres - Livres - -->
+<div class="modal livres" id="modal-livres" aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="modal-livres-title">
+  <div class="modal-header">
+    <h2 id="modal-livres-title"><i class="fas fa-book"></i> Livres</h2>
+    <button class="close-btn" aria-label="Fermer la fenêtre">&times;</button>
+  </div>
+  <!-- Sous-catégories Livres -->
+  <div class="subcategory">
+    <h3>Liste de livres</h3>
+    <div class="links-list">
+      <a href="" target="_blank" rel="noopener noreferrer">Imaginaire (Fantasy, science-fiction, fantastique, merveilleux), BD, historiques, revue/magazine, classique, orientation, dictionnaire.</a>
+    </div>
+</div>
+</div><!--Fin Livres-->
+
+
+
+
+<!-- Musiques - Musiques - Musiques - Musiques - Musiques - Musiques - Musiques - Musiques - Musiques - Musiques - Musiques - Musiques - Musiques - Musiques - Musiques - Musiques - Musiques - Musiques - Musiques -  -->
+<div class="modal musiques" id="modal-musiques" aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="modal-musiques-title">
+  <div class="modal-header">
+    <h2 id="modal-musiques-title"><i class="fas fa-music"></i> Musiques</h2>
+    <button class="close-btn" aria-label="Fermer la fenêtre">&times;</button>
+  </div>
+  <!-- Sous-catégories Musiques -->
+  <div class="subcategory">
+    <h3>Liste de musiques</h3>
+    <div class="links-list">
+      <a href="" target="_blank" rel="noopener noreferrer">Enregistrement piano, partitions, sites de streaming, CD/DVD, musiques de films/au piano/eurovision, classique</a>
+    </div>
+</div>
+</div><!--Fin Musiques-->
+
+
+
+
+<!-- Loisirs - Loisirs - Loisirs - Loisirs - Loisirs - Loisirs - Loisirs - Loisirs - Loisirs - Loisirs - Loisirs - Loisirs - Loisirs - Loisirs - Loisirs - Loisirs - Loisirs - Loisirs - Loisirs - Loisirs - Loisirs - Loisirs -  -->
+<div class="modal loisirs" id="modal-loisirs" aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="modal-loisirs-title">
+  <div class="modal-header">
+    <h2 id="modal-films-title"><i class="fas fa-guitar"></i> Loisirs</h2>
+    <button class="close-btn" aria-label="Fermer la fenêtre">&times;</button>
+  </div>
+  <!-- Sous-catégories Loisirs -->
+  <div class="subcategory">
+    <h3>Musique</h3>
+    <div class="links-list">
+    </div>
+</div>
+  <div class="subcategory">
+    <h3>Jeux de société</h3>
+    <div class="links-list">
+      <a href="https://www.jeux-de-cartes-personnalises.fr/prix/demande-de-prix/" target="_blank" rel="noopener noreferrer">Jeux de cartes personalisés</a>
+    </div>
+</div>
+</div><!--Fin Loisirs-->
+
+
+
+
+<!-- Achats - Achats - Achats - Achats - Achats - Achats - Achats - Achats - Achats - Achats - Achats - Achats - Achats - Achats - Achats - Achats - Achats - Achats - Achats - Achats - Achats -  -->
+<div class="modal achats" id="modal-achats" aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="modal-achats-title">
+  <div class="modal-header">
+    <h2 id="modal-achats-title"><i class="fas fa-shopping-cart"></i> Achats</h2>
+    <button class="close-btn" aria-label="Fermer la fenêtre">&times;</button>
+  </div>
+  <!-- Sous-catégories Achats -->
+  <div class="subcategory">
+    <h3>Sites d'achats</h3>
+    <div class="links-list">
+      <a href="https://www.bureau-vallee.fr/" target="_blank" rel="noopener noreferrer">Bureau Vallée</a>
+    </div>
+</div>
+</div><!--Fin Achats-->
+
+
+<!-- Outils - Outils - Outils - Outils - Outils - Outils - Outils - Outils - Outils - Outils - Outils - Outils - Outils - Outils - Outils - Outils - Outils - Outils - Outils - Outils - Outils - -->
+<div class="modal outils" id="modal-outils" aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="modal-outils-title">
+  <div class="modal-header">
+    <h2 id="modal-outils-title"><i class="fas fa-tools"></i> Outils</h2>
+    <button class="close-btn" aria-label="Fermer la fenêtre">&times;</button>
+  </div>
+  <!-- Sous-catégories Outils -->
+  <div class="subcategory">
+    <h3>Extensions et fonctionnalités</h3>
+    <div class="links-list">
+      <a href="https://addons.mozilla.org/fr/firefox/addon/adblocker-ultimate/?utm_source=addons.mozilla.org&utm_medium=referral&utm_content=search" target="_blank" rel="noopener noreferrer">AdBlocker Ultimate</a>
+    </div>
+  </div>
+</div>
+</body>
+
+
+
+<script>
+  // Gestion des ouvertures/fermetures des modales
+  const circles = document.querySelectorAll('.orbit-circle, #center-circle');
+  const modals = document.querySelectorAll('.modal');
+  circles.forEach(circle => {
+    circle.addEventListener('click', () => {
+      const cat = circle.getAttribute('data-category');
+      modals.forEach(modal => {
+        if(modal.classList.contains(cat)) {
+          modal.style.display = 'block';
+          modal.setAttribute('aria-hidden', 'false');
+        } else {
+          modal.style.display = 'none';
+          modal.setAttribute('aria-hidden', 'true');
+        }
+      });
+    });
+  });
+  // Fermeture modale
+  const closeButtons = document.querySelectorAll('.close-btn');
+  closeButtons.forEach(btn => {
+    btn.addEventListener('click', () => {
+      btn.closest('.modal').style.display = 'none';
+      btn.closest('.modal').setAttribute('aria-hidden', 'true');
+    });
+  });
+
+  // Fermer modale si clic hors fenêtre
+  window.addEventListener('click', (e) => {
+    modals.forEach(modal => {
+      if(e.target === modal) {
+        modal.style.display = 'none';
+        modal.setAttribute('aria-hidden', 'true');
+      }
+    });
+  });
+
+   // Fermer modal avec ESC
+  document.addEventListener('keydown', e => {
+    if(e.key === 'Escape') {
+      modals.forEach(modal => {
+        modal.style.display = 'none';
+        modal.setAttribute('aria-hidden', 'true');
+      });
+    }
+  });
+
+// Déplier et replier la barre létarale
+  document.getElementById('toggleSidebar').addEventListener('click', () => {
+  document.getElementById('sidebar').classList.toggle('expanded');
+});
+</script>
+
+</body>
+</html>
